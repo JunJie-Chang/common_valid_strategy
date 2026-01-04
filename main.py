@@ -41,7 +41,7 @@ def main():
         '2882.TW',  # 國泰金
     ]
     
-    stock_data = fetcher.get_multiple_stocks(symbols=test_stocks, period='2y')
+    stock_data = fetcher.get_multiple_stocks(symbols=test_stocks, period='10y')
     print(f"\n成功獲取 {len(stock_data)} 檔股票的數據")
     print()
     

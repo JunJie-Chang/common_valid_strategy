@@ -205,5 +205,80 @@ INDICATOR_STRATEGIES = {
         'sell_signal': lambda data: (data['STOCHk_14_3_3'] > 80) & \
                                     (data['STOCHk_14_3_3'] < data['STOCHd_14_3_3']),
     },
+    # ========== Multi-Indicator Strategies ==========
+    'RSI_MACD': {
+        'description': 'RSI + MACD 組合策略（RSI超賣且MACD金叉時買入）',
+        'buy_signal': lambda data: (data['RSI'] < 30) & \
+                                   (data['MACD_12_26_9'] > data['MACDs_12_26_9']) & \
+                                   (data['MACD_12_26_9'].shift(1) <= data['MACDs_12_26_9'].shift(1)),
+        'sell_signal': lambda data: (data['RSI'] > 70) | \
+                                    ((data['MACD_12_26_9'] < data['MACDs_12_26_9']) & \
+                                     (data['MACD_12_26_9'].shift(1) >= data['MACDs_12_26_9'].shift(1))),
+    },
+    'RSI_STOCHASTIC': {
+        'description': 'RSI + KD 組合策略（兩者都顯示超賣時買入）',
+        'buy_signal': lambda data: (data['RSI'] < 30) & \
+                                   (data['STOCHk_14_3_3'] < 20) & \
+                                   (data['STOCHk_14_3_3'] > data['STOCHd_14_3_3']),
+        'sell_signal': lambda data: (data['RSI'] > 70) | \
+                                    ((data['STOCHk_14_3_3'] > 80) & \
+                                     (data['STOCHk_14_3_3'] < data['STOCHd_14_3_3'])),
+    },
+    'MACD_MA': {
+        'description': 'MACD + 移動平均線組合策略（MACD金叉且價格在MA20上方）',
+        'buy_signal': lambda data: (data['MACD_12_26_9'] > data['MACDs_12_26_9']) & \
+                                   (data['MACD_12_26_9'].shift(1) <= data['MACDs_12_26_9'].shift(1)) & \
+                                   (data['Close'] > data['MA20']),
+        'sell_signal': lambda data: (data['MACD_12_26_9'] < data['MACDs_12_26_9']) & \
+                                    (data['MACD_12_26_9'].shift(1) >= data['MACDs_12_26_9'].shift(1)),
+    },
+    'RSI_BOLLINGER': {
+        'description': 'RSI + 布林通道組合策略（RSI超賣且觸及布林下軌）',
+        'buy_signal': lambda data: (data['RSI'] < 30) & \
+                                   (data['BBL_20_2.0'].notna()) & \
+                                   (data['Close'] <= data['BBL_20_2.0']),
+        'sell_signal': lambda data: (data['RSI'] > 70) | \
+                                    ((data['BBU_20_2.0'].notna()) & (data['Close'] >= data['BBU_20_2.0'])),
+    },
+    'MACD_STOCHASTIC': {
+        'description': 'MACD + KD 組合策略（MACD金叉且KD超賣）',
+        'buy_signal': lambda data: (data['MACD_12_26_9'] > data['MACDs_12_26_9']) & \
+                                   (data['MACD_12_26_9'].shift(1) <= data['MACDs_12_26_9'].shift(1)) & \
+                                   (data['STOCHk_14_3_3'] < 20) & \
+                                   (data['STOCHk_14_3_3'] > data['STOCHd_14_3_3']),
+        'sell_signal': lambda data: (data['MACD_12_26_9'] < data['MACDs_12_26_9']) & \
+                                    (data['MACD_12_26_9'].shift(1) >= data['MACDs_12_26_9'].shift(1)),
+    },
+    'MA_BOLLINGER': {
+        'description': '移動平均線 + 布林通道組合策略（觸及布林下軌且價格低於MA20時買入，或從下軌反彈突破MA20）',
+        'buy_signal': lambda data: ((data['BBL_20_2.0'].notna()) & \
+                                    (data['Close'] <= data['BBL_20_2.0']) & \
+                                    (data['Close'] <= data['MA20'])) | \
+                                   ((data['BBL_20_2.0'].notna()) & \
+                                    (data['Close'].shift(1) <= data['BBL_20_2.0'].shift(1)) & \
+                                    (data['Close'] > data['MA20']) & \
+                                    (data['Close'].shift(1) <= data['MA20'].shift(1))),
+        'sell_signal': lambda data: (data['Close'] < data['MA20']) | \
+                                    ((data['BBU_20_2.0'].notna()) & (data['Close'] >= data['BBU_20_2.0'])),
+    },
+    'RSI_MACD_MA': {
+        'description': 'RSI + MACD + 移動平均線三重組合策略（RSI超賣、MACD金叉且價格接近或低於MA20）',
+        'buy_signal': lambda data: (data['RSI'] < 30) & \
+                                   (data['MACD_12_26_9'] > data['MACDs_12_26_9']) & \
+                                   (data['MACD_12_26_9'].shift(1) <= data['MACDs_12_26_9'].shift(1)) & \
+                                   (data['Close'] <= data['MA20'] * 1.02),  # 允許價格在MA20附近（2%範圍內）
+        'sell_signal': lambda data: (data['RSI'] > 70) | \
+                                    ((data['MACD_12_26_9'] < data['MACDs_12_26_9']) & \
+                                     (data['MACD_12_26_9'].shift(1) >= data['MACDs_12_26_9'].shift(1))),
+    },
+    'MACD_MA_CROSS': {
+        'description': 'MACD + 移動平均線交叉組合策略（MACD金叉且5日線上穿20日線）',
+        'buy_signal': lambda data: (data['MACD_12_26_9'] > data['MACDs_12_26_9']) & \
+                                   (data['MACD_12_26_9'].shift(1) <= data['MACDs_12_26_9'].shift(1)) & \
+                                   (data['MA5'] > data['MA20']) & \
+                                   (data['MA5'].shift(1) <= data['MA20'].shift(1)),
+        'sell_signal': lambda data: (data['MACD_12_26_9'] < data['MACDs_12_26_9']) & \
+                                    (data['MACD_12_26_9'].shift(1) >= data['MACDs_12_26_9'].shift(1)),
+    },
 }
 
