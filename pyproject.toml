@@ -1,0 +1,23 @@
+[project]
+name = "common-valid-strategy"
+version = "0.1.0"
+description = "to test the old indicators"
+authors = [
+    {name = "張鈞傑",email = "justinooi0416@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pandas (>=2.3.3,<3.0.0)",
+    "numpy (>=1.24.0,<2.3.0)",
+    "yfinance (>=0.2.0,<1.0.0)",
+    "pandas-ta (>=0.3.14b0,<1.0.0)",
+]
+
+
+[tool.poetry]
+packages = [{include = "src"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
