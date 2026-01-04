@@ -150,5 +150,3 @@ common_valid_strategy/
 ## 授權
 
 本專案僅供學習和研究使用。
-
-# common-indicators-validation
