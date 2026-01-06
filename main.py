@@ -2,7 +2,7 @@
 主程式：執行技術指標回測
 """
 import pandas as pd
-from src.data_fetcher import DataFetcher
+from src.data_fetcher import DataFetcher, TAIWAN_STOCKS
 from src.indicators import TechnicalIndicators
 from src.backtester import Backtester
 from datetime import datetime
@@ -27,19 +27,23 @@ def main():
     # 2. 獲取多個重要台股數據
     print("步驟 2: 獲取台股數據...")
     print("正在獲取以下重要台股數據:")
-    for name, code in list(fetcher.list_available_stocks().items())[:10]:
+    for name, code in list(fetcher.list_available_stocks().items())[:]:
         print(f"  - {name} ({code})")
     print()
     
-    # 選擇要測試的股票（可以修改這個列表）
-    test_stocks = [
-        '2330.TW',  # 台積電
-        '2454.TW',  # 聯發科
-        '2317.TW',  # 鴻海
-        '2412.TW',  # 中華電
-        '2881.TW',  # 富邦金
-        '2882.TW',  # 國泰金
-    ]
+    # 選擇要測試的股票（從 TAIWAN_STOCKS 獲取所有股票，或可以選擇特定股票）
+    # 使用所有 TAIWAN_STOCKS 中的股票
+    test_stocks = list(TAIWAN_STOCKS.values())
+    
+    # 如果只想測試特定股票，可以取消註解並修改以下列表：
+    # test_stocks = [
+    #     '2330.TW',  # 台積電
+    #     '2454.TW',  # 聯發科
+    #     '2317.TW',  # 鴻海
+    #     '2412.TW',  # 中華電
+    #     '2881.TW',  # 富邦金
+    #     '2882.TW',  # 國泰金
+    # ]
     
     stock_data = fetcher.get_multiple_stocks(symbols=test_stocks, period='10y')
     print(f"\n成功獲取 {len(stock_data)} 檔股票的數據")
